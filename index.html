@@ -12,7 +12,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans&display=swap" rel="stylesheet">  
-
+    <!-- Google Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    
     <title>Momentum-App</title>
 </head>
 <body>
@@ -20,8 +22,9 @@
         <nav class="nav flex">
             <ul class="nav flex row">
                 <li id="temparature-container">
-                    <p class="temperature-text" id="temperature-reading">0</p>
+                    <p class="temperature-text" id="temperature-reading">0 <span>'°C'</span></p>
                 </li>
+                <li id=""><img id='weather-icon'src="" alt=""></li>
                 <li class='temperature-text'id="city-container"></li>
             </ul>
         </nav>
@@ -41,7 +44,33 @@
             </div>
         </div>
         <div class='flex'id="qoutes">qoutes</div>
-        <div id="todo-sidebar">Todo</div>
+        <div class="todo" id="todo-widget">
+            <div class="todo" id="todo-sidebar">
+                <span class="material-symbols-outlined">
+                    chevron_left
+                </span>
+            </div>
+            <div class='todo'id="todo-container">
+                <h3 class="todo">To-do List
+                </h3>
+                <button class="todo" id="add-todo-button">
+                    <span class="material-symbols-outlined">
+                        add
+                    </span>
+                Add to do
+                </button>
+                <div class="todo" id="add-todo-input">
+                    <input type="text">
+                    <button class="todo">Done</button>
+                </div>
+                <div class="todo" id="todo-list-wrapper">
+                    <ul class="todo" id="todo-list">
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+
     </div>
 </body>
 </html>

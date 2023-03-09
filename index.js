@@ -1,19 +1,13 @@
 const user = 'Paul'
 // Time
-const timeContainer = document.querySelector('#time')
-const time = new Date()
-console.log(time)
-// time.setHours(9)
-console.log();
-setInterval(()=>{
-    timeContainer.textContent = ('0'+time.getHours()).slice(-2)+":"+('0'+ time.getMinutes()).slice(-2)
-},1000)
+
+// const time = new Date()
+
 
 // Greetings
 const greetingContainer = document.querySelector('#greetings')
-function checkTimeGreeting(){
+function checkTimeGreeting(time){
     const hour = time.getHours()
-    console.log(hour);
     if(hour>=0 && hour<12){
         return 'Good morning'
     }
@@ -27,10 +21,13 @@ function checkTimeGreeting(){
         return 'Welcome'
     }
 }
-function toogleGreeting() {
-    greetingContainer.textContent = `${checkTimeGreeting()}, ${user}`
+function toogleGreeting(time) {
+    greetingContainer.textContent = `${checkTimeGreeting(time)}, ${user}`
 }
-setInterval( toogleGreeting(), 60000)
+function checkTime(time){
+    const timeContainer = document.querySelector('#time')
+    timeContainer.textContent = ('0'+time.getHours()).slice(-2)+":"+('0'+ time.getMinutes()).slice(-2)
+}
 
 // Qoutes
 let quotes ={
@@ -41,11 +38,11 @@ let quotes ={
         )
         .then(res => res.json())
         .then(data =>{
-            console.log(data)
+            // console.log(data)
         })
     }
 }
-quotes.fetchQuotes()
+// quotes.fetchQuotes()
 
 
 // Weather
@@ -66,9 +63,10 @@ let weather = {
         )
         .then( res => res.json())
         .then(data =>{
-            const {temp} = data.main
+            const {temp} = data.main;
             const cityName = name;
-            updateWeather(temp, cityName)
+            const {icon} = data.weather[0]
+            updateWeather(temp, icon, cityName)
         })
         }
     },
@@ -97,12 +95,73 @@ let weather = {
     }
     
 }
-function updateWeather(temperature, cityName) {
+function updateWeather(temp, icon,cityName) {
+    tempUnit = '°C'
+    iconURL = 'https://openweathermap.org/img/wn/'+icon+'.png'
     const temperatureReading = document.querySelector('#temperature-reading')
-    temperatureReading.textContent = temperature;
-    console.log(temperature)
+    temperatureReading.textContent = temp+tempUnit;
 
     const cityContainer = document.querySelector('#city-container')
     cityContainer.textContent = cityName
+
+    const weatherIcon = document.querySelector('#weather-icon')
+    // const iconImg = document.querySelector('#weather-icon')
+    weatherIcon.setAttribute('src',iconURL)
+
 }
-weather.geoCoder.fetchCoordinate('tokyo')
+
+
+// todo
+const todoSidebar = document.querySelector('#todo-sidebar')
+const todoContainer = document.querySelector('#todo-container')
+const todoArrow = document.querySelector('#todo-sidebar span')
+const todoListArr = Array.from(document.querySelectorAll('#todo-list >*'))
+console.log(todoListArr);
+todoSidebar.addEventListener('click', ()=>{
+    todoContainerToggle()
+
+})
+
+window.onclick= (e)=>{
+    console.log(e.target.parentElement.classList.contains('todo'))
+    if(!e.target.parentElement.classList.contains('todo')){
+        todoContainerToggle()
+    }
+}
+
+function todoContainerToggle(){
+    todoContainer.classList.toggle('active')
+    if (todoArrow.textContent =='chevron_right') {
+        todoArrow.textContent = 'chevron_left'
+    }
+    else{
+        todoArrow.textContent = 'chevron_right'
+    }
+}
+function addTodoToggle(){
+    
+}
+// function checkTodo(params) {
+//     console.log(todoListArr)
+// }
+
+addEventListener
+
+function createTodo(){
+    const todoItem = document.createElement('li')
+    const checkbox = document.createElement('input').setAttribute('type','checkbox')
+}
+
+
+setInterval(()=>{
+    const time = new Date();
+    toogleGreeting(time);
+    checkTime(time)
+
+},1000)
+
+const city = 'cebu'
+weather.geoCoder.fetchCoordinate(city)
+setInterval(()=>{
+    weather.geoCoder.fetchCoordinate(city)
+},10000)
