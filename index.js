@@ -38,11 +38,42 @@ let quotes ={
         )
         .then(res => res.json())
         .then(data =>{
-            // console.log(data)
+            this.parseData(data)
         })
+    },
+    parseData : function(data){
+        const quotesArr = []
+        data.results.forEach( quotes =>{
+            quotesArr.push({'author':quotes.author ,content: quotes.content})
+        })
+        displayQuotes(quotesArr)
     }
 }
-// quotes.fetchQuotes()
+function displayQuotes(quotesArr) {
+    const index = Math.floor(Math.random()*quotesArr.length+1)
+    const quotes = document.querySelector('#quotes')
+    const quotesContent = quotesArr.splice(index, 1)
+    quotes.textContent = quotesContent[0].content
+
+}
+
+var category = 'inspirational'
+$.ajax({
+    method: 'GET',
+    url: 'https://api.api-ninjas.com/v1/quotes?category=' + category+'&limit?=10',
+    headers: { 'X-Api-Key': 'DSd6FPovthYiP8npib9Afg==qO4KqQ9W6uxnpcu9'},
+    contentType: 'application/json',
+    success: function(result) {
+        console.log(result);
+    },
+    error: function ajaxError(jqXHR) {
+        console.error('Error: ', jqXHR.responseText);
+    }
+});
+
+// setInterval(()=>{
+//     displayQuotes(quotes.parseData.quotesArr)
+// }, 60000)
 
 
 // Weather
@@ -116,7 +147,6 @@ const todoSidebar = document.querySelector('#todo-sidebar')
 const todoContainer = document.querySelector('#todo-container')
 const todoArrow = document.querySelector('#todo-sidebar span')
 const todoListArr = Array.from(document.querySelectorAll('#todo-list >*'))
-console.log(todoListArr);
 todoSidebar.addEventListener('click', ()=>{
     todoContainerToggle()
 
@@ -138,15 +168,9 @@ function todoContainerToggle(){
         todoArrow.textContent = 'chevron_right'
     }
 }
-function addTodoToggle(){
-    
-}
-// function checkTodo(params) {
-//     console.log(todoListArr)
+// function addTodoToggle(){
+
 // }
-
-addEventListener
-
 function createTodo(){
     const todoItem = document.createElement('li')
     const checkbox = document.createElement('input').setAttribute('type','checkbox')
