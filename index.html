@@ -54,21 +54,25 @@
                 </span>
             </div>
             <div class='todo'id="todo-container">
-                <h3 class="todo">To-do List
+                <h3 class="todo" id="todo-header">To-do List
                 </h3>
-                <button class="todo" id="add-todo-button">
+                <button class="todo hidden" id="add-todo-button">
                     <span class="material-symbols-outlined">
                         add
                     </span>
-                Add to do
+                    Add to do
                 </button>
                 <div class="todo" id="add-todo-input">
-                    <input type="text">
-                    <button class="todo">Done</button>
+                    <!-- <textarea type="area" placeholder="Add todo"></textarea> -->
+                    <span class="textarea" role="textbox" contenteditable></span>
+                    <button class="todo" id="submit-todo">Done</button>
                 </div>
                 <div class="todo" id="todo-list-wrapper">
                     <ul class="todo" id="todo-list">
-
+                        <li class="todo">
+                            <input type="checkbox">
+                            <span contenteditable="true">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores nobis quod sapiente adipisci pariatur numquam esse quasi beatae, expedita, error odio natus dolore veniam tempora ex qui ducimus quidem at.</span>
+                        </li>
                     </ul>
                 </div>
             </div>
