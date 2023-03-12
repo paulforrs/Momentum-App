@@ -62,6 +62,7 @@ nav {
   align-items: center;
   justify-content: center;
   transform: translate(0, -50%);
+  transition: all 0.5s;
 }
 
 #todo-sidebar {
@@ -77,12 +78,15 @@ nav {
   border-top-left-radius: 20px;
   height: 150px;
   cursor: pointer;
+  transition: all 0.5s;
 }
 #todo-sidebar span {
   text-orientation: upright;
 }
 
 #todo-container {
+  overflow: auto;
+  position: relative;
   background-color: rgba(12, 12, 12, 0.849);
   min-height: 200px;
   height: 85vh;
@@ -96,16 +100,19 @@ nav {
   grid-template-rows: 40px 30px;
   justify-items: center;
   align-items: center;
+  transition: all 1s;
 }
 #todo-container span {
   cursor: pointer;
 }
+
 ul > li {
   list-style: none;
 }
 
-#todo-header {
+#todo-title {
   padding-bottom: 10px;
+  position: fixed;
 }
 
 #add-todo {
@@ -122,7 +129,7 @@ ul > li {
   justify-content: center;
   align-items: center;
   color: black;
-  width: 100%;
+  width: 80%;
   margin: 10px;
   margin-bottom: 20px;
   border-radius: 10px;
@@ -169,6 +176,29 @@ ul > li {
   cursor: pointer;
 }
 
+#todo-list-wrapper {
+  width: 100%;
+}
+
+.todo-item {
+  display: grid;
+  justify-content: center;
+  grid-template-columns: 30px 1fr 30px;
+  height: auto;
+  width: 100%;
+  overflow: hidden;
+  justify-items: flex-start;
+  margin: 20px 0;
+}
+.todo-item input {
+  width: 20px;
+}
+.todo-item span {
+  padding: 5px;
+  text-align: justify;
+  margin-left: 20px;
+}
+
 .textarea[contenteditable]:empty::before {
   content: "Add todo";
   color: gray;
@@ -180,6 +210,25 @@ ul > li {
 
 #add-todo-input:focus {
   border: white 2px solid;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #292929;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #707070;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 #quotes {

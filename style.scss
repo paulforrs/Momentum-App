@@ -54,6 +54,7 @@ nav{
     align-items: center;
     justify-content: center;
     transform: translate(0 ,-50%);
+    transition: all 0.5s;
 }
 #todo-sidebar{
     display: flex;
@@ -71,8 +72,11 @@ nav{
     span{
         text-orientation: upright;
     }
+    transition: all 0.5s;
 }
 #todo-container{
+    overflow: auto;
+    position: relative;
     background-color: $todoContainerColor;
     min-height: 200px;
     height: 85vh;
@@ -86,18 +90,20 @@ nav{
     grid-template-rows: 40px 30px;
     justify-items: center;
     align-items: center;
+    transition: all 1s;
     span{
         cursor: pointer;
     }
-    ul{
+    // ul{
         
-    }
+    // }
 }
 ul > li{
     list-style: none;
 }
-#todo-header{
+#todo-title{
     padding-bottom: 10px;
+    position: fixed;
 }
 #add-todo{
     display: flex;
@@ -109,10 +115,11 @@ ul > li{
 }
 #add-todo-button{
     display: flex;
+    // position: fixed;
     justify-content: center;
     align-items: center;
     color: black;
-    width: 100%;
+    width: 80%;
     margin: 10px;
     margin-bottom: 20px;
     border-radius: 10px;
@@ -124,6 +131,7 @@ ul > li{
 #add-todo-input{
     display: flex;
     // background-color: $todoContainerColor;
+    // position: fixed;
     padding: 10px 0;
     width: 100%;
     flex-direction: column;
@@ -164,6 +172,27 @@ ul > li{
         cursor: pointer;
     }
 }
+#todo-list-wrapper{
+    width: 100%;
+}
+.todo-item{
+    display: grid;
+    justify-content: center;
+    grid-template-columns: 30px 1fr 30px;
+    height: auto;
+    width: 100%;
+    overflow: hidden;
+    justify-items: flex-start;
+    margin: 20px 0;
+    input{
+        width: 20px;
+    }
+    span{
+        padding: 5px;
+        text-align:justify;
+        margin-left: 20px;
+    }
+}
 .textarea[contenteditable]:empty::before {
     content: "Add todo";
     color: gray;
@@ -174,6 +203,26 @@ ul > li{
 #add-todo-input:focus{
     border: white 2px solid;
 }
+
+//  todo list scroll bar
+::-webkit-scrollbar {
+    width: 5px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #292929; 
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #707070; 
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+  }
 #quotes{
     text-align: center;
     font-size: .8rem;

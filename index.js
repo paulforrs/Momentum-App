@@ -143,10 +143,15 @@ function updateWeather(temp, icon,cityName) {
 const todoSidebar = document.querySelector('#todo-sidebar')
 const todoContainer = document.querySelector('#todo-container')
 const todoArrow = document.querySelector('#todo-sidebar span')
-const todoListArr = Array.from(document.querySelectorAll('#todo-list >*'))
+
+const todoList = document.querySelector('#todo-list')
 const addTodoButton = document.querySelector('#add-todo-button');
 const addTodoInput = document.querySelector('#add-todo-input');
 const submitTodo = document.querySelector('#submit-todo')
+const todoInput = document.querySelector('#todo-input')
+const todoHero = document.querySelector('#todo-hero');
+
+const todoArr = []
 
 todoSidebar.addEventListener('click', ()=>{
     todoContainerToggle()
@@ -154,20 +159,27 @@ todoSidebar.addEventListener('click', ()=>{
 })
 submitTodo.addEventListener('click',()=>{
     toggleTodoInput()
+    addTodoArr()
+    clearTodoInput()
+    clearTodoList()
+    renderTodos(todoArr)
+    displayToHero()
 })
 addTodoButton.addEventListener('click',()=>{
     toggleTodoInput()
 })
 window.onclick= (e)=>{
-    if(!e.target.parentElement.classList.contains('todo') && todoContainer.classList.contains('active')){
+    if(
+    !e.target.parentElement.classList.contains('todo') 
+    && 
+    todoContainer.classList.contains('active'))
+        {
         toggleTodoArrow()
         todoContainer.classList.remove('active')
     }
 }
-
 function todoContainerToggle(){
     todoContainer.classList.toggle('active')
-
 }
 function toggleTodoArrow(){
     if (todoArrow.textContent =='chevron_right') {
@@ -177,19 +189,62 @@ function toggleTodoArrow(){
         todoArrow.textContent = 'chevron_right'
     }
 }
-
-
-
 function toggleTodoInput(){
     addTodoButton.classList.toggle('hidden')
     addTodoInput.classList.toggle('hidden')
 }
 // function addTodoToggle(){
-
 // }
-function createTodo(){
+function renderTodos(todoArr) {
+    for (let i = 0; i < todoArr.length; i++) {
+        createTodo(todoArr[i])
+    }
+}
+function addTodoArr(){
+    todoTextContent = todoInput.textContent
+    if(todoTextContent!=''){
+        // todoArr.unshift(todoTextContent);
+        // // console.log(todoTextContent, todoArr)
+        // createTodo(todoTextContent)
+        // todoInput.textContent = ''
+        todo = {'todo': todoTextContent}
+        todo.isComplete = 'false'
+        todoArr.unshift(todo)
+    }
+}
+function clearTodoInput() {
+    todoInput.textContent =''
+}
+function createTodo(toDo){
     const todoItem = document.createElement('li')
-    const checkbox = document.createElement('input').setAttribute('type','checkbox')
+    const checkbox = document.createElement('input')
+    checkbox.setAttribute('type','checkbox')
+    todoItem.setAttribute('class', 'todo todo-item')
+    const todoText = document.createElement('span').textContent = toDo.todo;
+    todoItem.append(checkbox)
+    todoItem.append(todoText)
+    todoList.append(todoItem)
+}
+function clearTodoList(){
+    todoList.innerHTML = ''
+    todoHero.innerHTML =''
+
+}
+function displayToHero(){
+    const todoItemsArr = document.querySelectorAll('.todo-item');
+
+    const heroTodo = document.createElement('p');
+    if(todoItemsArr.length == 0){
+        heroTodo.textContent = 'Nothing to do today'
+    }
+    else{
+        heroTodo.textContent = todoArr[0].todo
+        // console.log(todoArr[0].todo)
+    }
+    todoHero.append(heroTodo)
+}
+function createTodoHero(){
+    
 }
 setInterval(()=>{
     const time = new Date();
@@ -198,7 +253,7 @@ setInterval(()=>{
 
 },1000)
 
-
+displayToHero()
 const city = 'cebu'
 weather.geoCoder.fetchCoordinate(city)
 // setInterval(()=>{
