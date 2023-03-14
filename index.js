@@ -157,6 +157,7 @@ todoSidebar.addEventListener('click', ()=>{
     todoContainerToggle()
     toggleTodoArrow()
 })
+// SUBMIT
 submitTodo.addEventListener('click',()=>{
     toggleTodoInput()
     addTodoArr()
@@ -168,6 +169,7 @@ submitTodo.addEventListener('click',()=>{
 addTodoButton.addEventListener('click',()=>{
     toggleTodoInput()
 })
+// TOGGLE CONTAINER WHEN CLICKED OUTSIDE
 window.onclick= (e)=>{
     if(
     !e.target.parentElement.classList.contains('todo') 
@@ -198,6 +200,9 @@ function toggleTodoInput(){
 function renderTodos(todoArr) {
     for (let i = 0; i < todoArr.length; i++) {
         createTodo(todoArr[i])
+        // checkbox[i].addEventListener('click',(e)=>{
+        //     console.log(e)
+        // })
     }
 }
 function addTodoArr(){
@@ -224,26 +229,34 @@ function createTodo(toDo){
     todoItem.append(checkbox)
     todoItem.append(todoText)
     todoList.append(todoItem)
+
+    checkbox.addEventListener('click',(e)=>{
+        console.log(e.target.id)
+    })
 }
 function clearTodoList(){
-    todoList.innerHTML = ''
+    todoList.innerHTML =''
     todoHero.innerHTML =''
-
 }
 function displayToHero(){
     const todoItemsArr = document.querySelectorAll('.todo-item');
-
     const heroTodo = document.createElement('p');
     if(todoItemsArr.length == 0){
         heroTodo.textContent = 'Nothing to do today'
+        todoHero.append(heroTodo)
     }
     else{
-        heroTodo.textContent = todoArr[0].todo
+        todoHero.innerHTML =`${todoItemsArr[0]}`
+       
+        // console.log(`${todoItemsArr[0]}`)
         // console.log(todoArr[0].todo)
     }
-    todoHero.append(heroTodo)
 }
-function createTodoHero(){
+// function createTodoHero(){
+    
+// }
+for(let i = 0; i < todoArr.length; i++) {
+    const element = array[i];
     
 }
 setInterval(()=>{
