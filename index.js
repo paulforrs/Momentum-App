@@ -1,9 +1,6 @@
 const user = 'Paul'
 // Time
-
 // const time = new Date()
-
-
 // Greetings
 const greetingContainer = document.querySelector('#greetings')
 function checkTimeGreeting(time){
@@ -28,7 +25,6 @@ function checkTime(time){
     const timeContainer = document.querySelector('#time')
     timeContainer.textContent = ('0'+time.getHours()).slice(-2)+":"+('0'+ time.getMinutes()).slice(-2)
 }
-
 // Qoutes
 // let quotes ={
 //     url: 'https://zenquotes.io/api/today',
@@ -55,7 +51,6 @@ function displayQuotes(quotesArr) {
     // const quotesContent = quotesArr.splice(index, 1)
     quotes.textContent = '"'+quotesArr[0].quote +'"'
 }
-
 var category = 'success'
 function fetchQuotes(){
     $.ajax({
@@ -71,7 +66,6 @@ function fetchQuotes(){
         }
     });
 }
-
 
 // Weather
 let weather = {
@@ -143,13 +137,13 @@ function updateWeather(temp, icon,cityName) {
 const todoSidebar = document.querySelector('#todo-sidebar')
 const todoContainer = document.querySelector('#todo-container')
 const todoArrow = document.querySelector('#todo-sidebar span')
-
 const todoList = document.querySelector('#todo-list')
 const addTodoButton = document.querySelector('#add-todo-button');
 const addTodoInput = document.querySelector('#add-todo-input');
 const submitTodo = document.querySelector('#submit-todo')
 const todoInput = document.querySelector('#todo-input')
 const todoHero = document.querySelector('#todo-hero');
+const todoItemsArr = document.querySelectorAll('.todo-item');
 
 const todoArr = []
 
@@ -162,9 +156,7 @@ submitTodo.addEventListener('click',()=>{
     toggleTodoInput()
     addTodoArr()
     clearTodoInput()
-    clearTodoList()
-    renderTodos(todoArr)
-    displayToHero()
+    refreshTodo()
 })
 addTodoButton.addEventListener('click',()=>{
     toggleTodoInput()
@@ -197,12 +189,35 @@ function toggleTodoInput(){
 }
 // function addTodoToggle(){
 // }
+function refreshTodo() {
+    clearTodoList()
+    renderTodos(todoArr)
+}
 function renderTodos(todoArr) {
     for (let i = 0; i < todoArr.length; i++) {
         createTodo(todoArr[i])
         // checkbox[i].addEventListener('click',(e)=>{
         //     console.log(e)
         // })
+    }
+    const checkboxArr = Array.from(document.querySelectorAll('[type=checkbox]'))
+    console.log(checkboxArr)
+    checkboxArr.forEach(elem=>{
+        elem.addEventListener('click',(e)=>{
+            index = checkboxArr.indexOf(e.target)
+            toggleCheckbox(index)
+            refreshTodo()
+            })
+    })
+}
+function toggleCheckbox(index){
+    if(todoArr[index].isComplete == 'true'){
+        todoArr[index].isComplete = 'false'
+        console.log(todoArr[index].isComplete)
+    }
+    else{
+        todoArr[index].isComplete = 'true'
+        console.log(todoArr[index].isComplete)
     }
 }
 function addTodoArr(){
@@ -225,21 +240,28 @@ function createTodo(toDo){
     const checkbox = document.createElement('input')
     checkbox.setAttribute('type','checkbox')
     todoItem.setAttribute('class', 'todo todo-item')
+    if(toDo.isComplete == 'true'){
+        checkbox.setAttribute('checked', null)
+        todoItem.style.textDecoration = 'line-through'
+        console.log('checked')
+    }
     const todoText = document.createElement('span').textContent = toDo.todo;
     todoItem.append(checkbox)
     todoItem.append(todoText)
     todoList.append(todoItem)
 
-    checkbox.addEventListener('click',(e)=>{
-        console.log(e.target.id)
-    })
 }
+
+
+// function refreshTodoArr(params) {
+//     const todoItemsArr = document.querySelectorAll('.todo-item');
+// }
 function clearTodoList(){
     todoList.innerHTML =''
     todoHero.innerHTML =''
 }
 function displayToHero(){
-    const todoItemsArr = document.querySelectorAll('.todo-item');
+
     const heroTodo = document.createElement('p');
     if(todoItemsArr.length == 0){
         heroTodo.textContent = 'Nothing to do today'
