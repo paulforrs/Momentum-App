@@ -112,16 +112,24 @@ const todoItemsArr = document.querySelectorAll('.todo-item');
 
 // local storage
 let todoArr = JSON.parse(window.localStorage.getItem('todoArr') || [])
-let uncheckedTodo =[]
+let uncheckedTodo;
 function fetchStoreTodo(){
     window.localStorage.setItem('todoArr', JSON.stringify(todoArr))
     todoArr = JSON.parse(window.localStorage.getItem('todoArr'))
-    uncheckedTodo = todoArr.filter(index=>
-        index.isComplete === 'false'
-    )
-    console.log(todoArr);
+    refreshUncheckTodo()
 }
 fetchStoreTodo()
+
+function refreshUncheckTodo() {
+    uncheckedTodo = []
+    for (let i = 0; i < todoArr.length; i++) {
+        const todo= todoArr[i]
+        if (todo.isComplete === false) {
+            uncheckedTodo.push({'todo': todo.todo, 'isComplete': todo.isComplete, 'index': i})
+        }
+    }
+}
+
 window.localStorage.setItem('todoArr', JSON.stringify(todoArr))
 
 todoSidebar.addEventListener('click', ()=>{
@@ -167,68 +175,40 @@ function toggleTodoInput(){
 function refreshTodo() {
     fetchStoreTodo()
     clearTodoList()
-    renderTodos(todoArr)
+    renderTodos()
     displayToHero()
 }
-function renderTodos(todoArr) {
+function renderTodos() {
     if(todoArr.length == 0){
         const noTodo = document.createElement('p')
         noTodo.textContent = "No todo available"
         todoList.append(noTodo)
     }
     for (let i = 0; i < todoArr.length; i++) {
-        createTodo(todoArr, i, todoList)
+        const toDo = todoArr[i]
+        createTodo(toDo, i, todoList)
     }
-    // checkbox eventhandler
-    // const checkboxArr = Array.from(document.querySelectorAll('#todo-list [type=checkbox]'))
-    // checkboxArr.forEach(elem=>{
-    //     elem.addEventListener('click',(e)=>{
-    //         index = checkboxArr.indexOf(e.target)
-    //         toggleIsComplete(index)
-    //         refreshTodo()
-    //         })
-    // })
-    // const deleteIconArr = Array.from(document.querySelectorAll('#todo-list .delete-icon'))
-    // deleteIconArr.forEach( icon =>{
-    //     icon.addEventListener('click',(e)=>{
-    //         index = deleteIconArr.indexOf(e.target)
-    //         todoArr.splice(index,1)
-    //         refreshTodo()
-    //     })
-    // })
-    // // todolist edit event handler
-    // const todoListArr = Array.from(document.querySelectorAll('#todo-list p'))
-    // todoListArr.forEach(todolist =>{
-    //     todolist.addEventListener('input',(e)=>{
-    //         index = todoListArr.indexOf(e.target)
-    //         todoArr
-    //         todoArr[index].todo = e.target.textContent
-    //         console.log('input')
-    //         window.localStorage.setItem('todoArr', JSON.stringify(todoArr))
-    //     })
-    // })
 }
 function toggleIsComplete(index){
-    if(todoArr[index].isComplete == 'true'){
-        todoArr[index].isComplete = 'false'
+    if(todoArr[index].isComplete == true){
+        todoArr[index].isComplete = false
     }
     else{
-        todoArr[index].isComplete = 'true'
+        todoArr[index].isComplete = true
     }
 }
 function addTodoArr(){
     todoTextContent = todoInput.textContent
     if(todoTextContent!=''){
         todo = {'todo': todoTextContent}
-        todo.isComplete = 'false'
+        todo.isComplete = false
         todoArr.unshift(todo)
     }
 }
 function clearTodoInput() {
     todoInput.textContent =''
 }
-function createTodo(array, index, container){
-    toDo = array[index]
+function createTodo(toDo, index, container){
     const todoItem = document.createElement('li')
     const checkbox = document.createElement('input')
     // create delete icon
@@ -242,31 +222,35 @@ function createTodo(array, index, container){
     todoText.setAttribute('contenteditable', 'true')
     todoText.textContent = toDo.todo;
     // retreive checkbox from previous display
-    if(toDo.isComplete == 'true'){
+    if(toDo.isComplete == true){
         checkbox.setAttribute('checked', null)
         todoText.classList.add('checked')
     }
     // checkbox eventhandler
-    checkbox.addEventListener('click',(e)=>{
+    checkbox.addEventListener('click',()=>{
         toggleIsComplete(index)
+        displayToHero()
         refreshTodo()
-        })
-    deleteIcon.addEventListener('click',(e)=>{
-            todoArr.splice(index,1)
-            refreshTodo()
-        })
+    })
+    deleteIcon.addEventListener('click',()=>{
+        todoArr.splice(index,1)
+        displayToHero()
+        refreshTodo()
+    })
     // todolist edit event handler
-    const todoListArr = Array.from(document.querySelectorAll('#todo-list p'))
-    todoListArr.forEach(todolist =>{
-        todolist.addEventListener('input',(e)=>{
-            index = todoListArr.indexOf(e.target)
-            todoArr
-            todoArr[index].todo = e.target.textContent
-            console.log('input')
-            window.localStorage.setItem('todoArr', JSON.stringify(todoArr))
+    todoText.addEventListener('input',(e)=>{
+        todoArr[index].todo = e.target.textContent
+        window.localStorage.setItem('todoArr', JSON.stringify(todoArr))
+        if (container.classList.contains('todo-list')) {
             todoHero.innerHTML =''
+            refreshUncheckTodo()
             displayToHero()
-        })
+        }
+        else{
+            todoList.innerHTML = ''
+            renderTodos()
+        }
+  
     })
     todoItem.append(checkbox)
     todoItem.append(todoText)
@@ -284,7 +268,8 @@ function displayToHero(){
         todoHero.append(heroTodo)
     }
     else{
-        createTodo(uncheckedTodo, 0, todoHero)
+        index = uncheckedTodo[0].index
+        createTodo(uncheckedTodo[0], index, todoHero)
     }
 }
 // background
