@@ -1,0 +1,32 @@
+{
+    "sunrise":[
+        {
+            "url":"https://www.photopills.com/sites/default/files/tutorials/2020/sunrise-cover.jpg"
+        },
+        {
+            "url": "https://live.staticflickr.com/1502/24462080475_64181e8831_b.jpg"
+        },
+        {
+            "url": "https://wallpaperaccess.com/full/1319725.jpg"
+        },
+        {
+            "url": "https://wallpaperaccess.com/full/1541608.jpg"
+        },
+        {
+            "url": "https://wallpaper.dog/large/17257236.jpg"
+        },
+        {
+            "url": "https://images.pexels.com/photos/9754/mountains-clouds-forest-fog.jpg?cs=srgb&dl=pexels-creative-vix-9754.jpg&fm=jpg"
+        }
+    ],
+    "sunset":[
+        {
+            "url": "https://cdn.wallpapersafari.com/51/36/fnLZYO.jpg"
+        }
+    ],
+    "night":[
+        {
+            "url": "https://free4kwallpapers.com/uploads/originals/2015/05/13/chicago-night-life.jpg"
+        }
+    ]
+}

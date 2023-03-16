@@ -46,7 +46,10 @@
                 
             </div>
         </div>
-        <div class='flex'id="quotes">qoutes</div>
+        <div class='flex'id="quote-container">
+            <p id="quotes"></p>
+            <P id="author"></P>
+        </div>
         <div class="todo" id="todo-widget">
             <div class="todo" id="todo-sidebar">
                 <span class="material-symbols-outlined">
@@ -56,13 +59,13 @@
             <div class='todo'id="todo-container">
                 <h3 class="todo" id="todo-header">To-do List
                 </h3>
-                <button class="todo hidden" id="add-todo-button">
+                <button class="todo" id="add-todo-button">
                     <span class="material-symbols-outlined">
                         add
                     </span>
                     Add to do
                 </button>
-                <div class="todo" id="add-todo-input">
+                <div class="todo hidden" id="add-todo-input">
                     <!-- <textarea type="area" placeholder="Add todo"></textarea> -->
                     <span class="textarea" role="textbox" contenteditable id="todo-input"></span>
                     <button class="todo" id="submit-todo">Done</button>

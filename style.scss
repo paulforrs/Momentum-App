@@ -15,6 +15,7 @@ $todoContainerColor: rgba(12, 12, 12, 0.849);
     overflow:hidden;
     display: grid;
     grid-template-rows: 50px 4fr 2fr 100px;
+    transition: all .75s;
 }
 .nav{
     list-style: none;
@@ -42,8 +43,19 @@ nav{
     flex-direction: column;
     align-items: center;
 }
-#qoutes{
+#quote-container{
     justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    font-size: .8rem;
+    padding: 0 20%;
+    font-style: italic;
+    justify-content: center;
+    align-items: center;
+    p{
+        justify-content: center;
+    }
 }
 #todo-widget{
     position: absolute;
@@ -94,9 +106,6 @@ nav{
     span{
         cursor: pointer;
     }
-    // ul{
-        
-    // }
 }
 ul > li{
     list-style: none;
@@ -115,7 +124,6 @@ ul > li{
 }
 #add-todo-button{
     display: flex;
-    // position: fixed;
     justify-content: center;
     align-items: center;
     color: black;
@@ -130,8 +138,6 @@ ul > li{
 }
 #add-todo-input{
     display: flex;
-    // background-color: $todoContainerColor;
-    // position: fixed;
     padding: 10px 0;
     width: 100%;
     flex-direction: column;
@@ -178,20 +184,29 @@ ul > li{
 .todo-item{
     display: grid;
     justify-content: center;
-    grid-template-columns: 30px 1fr 30px;
+    grid-template-columns: 30px 200px 30px;
     height: auto;
     width: 100%;
     overflow: hidden;
     justify-items: flex-start;
-    margin: 20px 0;
+    margin: 10px 0;
+    padding: 10px 0;
     input{
         width: 20px;
     }
-    span{
+    p{
         padding: 5px;
-        text-align:justify;
-        margin-left: 20px;
+        max-width: 100%;
+        width: 100%;
     }
+    p:focus{
+        outline: rgb(221, 218, 218);
+    }
+
+}
+.checked{
+    color: #555;
+    text-decoration: line-through;
 }
 .textarea[contenteditable]:empty::before {
     content: "Add todo";
@@ -223,14 +238,6 @@ ul > li{
   ::-webkit-scrollbar-thumb:hover {
     background: #555; 
   }
-#quotes{
-    text-align: center;
-    font-size: .8rem;
-    padding: 0 20%;
-    font-style: italic;
-    justify-content: center;
-    align-items: center;
-}
 .flex{
     display: flex;
 }
