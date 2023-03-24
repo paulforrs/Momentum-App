@@ -21,6 +21,11 @@
     <title>Momentum-App</title>
 </head>
 <body>
+    <div id="intro">
+        <div id="intro-container">
+            
+        </div>
+    </div>
     <div class="hero">
         <nav class="nav flex">
             <ul class="nav flex row">
@@ -37,13 +42,13 @@
             </div>
             <div id="greetings-container">
                 <p id="greetings"></p>
+                <p id="user-name"></p>
             </div>
         </div>
         
         <div class='flex'id="todo-display">
             <p>Today</p>
             <div id="todo-hero">
-                
             </div>
         </div>
         <div class='flex'id="quote-container">
@@ -73,6 +78,22 @@
                     <ul class="todo todo-list" id="todo-list">
                     </ul>
                 </div>
+            </div>
+        </div>
+    </div>
+    <!-- User input Modal -->
+    <div id="user-modal" class="hidden">
+        <div id="user-container" class="users">
+            <span id="modal-close"class="material-symbols-outlined">
+                close
+            </span>
+            <h2 class="header">Users</h2>
+            <ul id="user-profile-list">
+            </ul>
+            <button id="new-user-button" class="">New User</button>
+            <div id="new-user-wrapper" class="new-user hidden">
+                <input class="new-user" id='new-user' type="text">
+                <button class="new-user" id="add-user">Add</button>
             </div>
         </div>
     </div>

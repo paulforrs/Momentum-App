@@ -3,7 +3,6 @@
   padding: 0;
   box-sizing: border-box;
   font-family: "Work Sans", sans-serif;
-  color: rgb(255, 255, 255);
 }
 
 .hero {
@@ -16,6 +15,7 @@
   display: grid;
   grid-template-rows: 50px 4fr 2fr 100px;
   transition: all 0.75s;
+  color: white;
 }
 
 .nav {
@@ -40,8 +40,12 @@ nav {
   font-size: 2.5rem;
 }
 
-#greetings {
+#greetings-container {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 10px;
   font-size: 1.2rem;
+  text-align: center;
 }
 
 #todo-display {
@@ -96,6 +100,10 @@ nav {
   text-orientation: upright;
 }
 
+.delete-icon {
+  cursor: pointer;
+}
+
 #todo-container {
   overflow: auto;
   position: relative;
@@ -113,9 +121,6 @@ nav {
   justify-items: center;
   align-items: center;
   transition: all 1s;
-}
-#todo-container span {
-  cursor: pointer;
 }
 
 ul > li {
@@ -195,16 +200,19 @@ ul > li {
 .todo-item {
   display: grid;
   justify-content: center;
-  grid-template-columns: 30px 200px 30px;
+  grid-template-columns: 30px 190px 30px;
   height: auto;
   width: 100%;
   overflow: hidden;
-  justify-items: flex-start;
+  justify-items: center;
   margin: 10px 0;
   padding: 10px 0;
+  align-items: center;
 }
 .todo-item input {
   width: 20px;
+  height: 20px;
+  outline: 2px;
 }
 .todo-item p {
   padding: 5px;
@@ -231,6 +239,57 @@ ul > li {
 
 #add-todo-input:focus {
   border: white 2px solid;
+}
+
+#user-name {
+  cursor: pointer;
+}
+
+#user-name:hover {
+  text-decoration: underline;
+}
+
+#user-modal {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(41, 41, 41, 0.3019607843);
+  z-index: 1;
+  top: 0%;
+}
+
+#user-modal > * {
+  color: black;
+}
+
+#user-container {
+  display: grid;
+  grid-template-rows: 1fr 100px;
+  position: absolute;
+  width: 600px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+}
+
+.header {
+  padding: 5px;
+  margin: 5px;
+}
+
+#modal-close {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #aaa;
+  float: right;
+  right: 0%;
+  top: 0%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
 }
 
 ::-webkit-scrollbar {

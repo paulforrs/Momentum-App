@@ -1,6 +1,42 @@
-const user = 'Paul'
-// Greetings
-const greetingContainer = document.querySelector('#greetings')
+// Default values
+let user = 'Guest'
+let todoArr = []
+let uncheckedTodo = [];
+let city = 'cebu';
+let momentumApp = {}
+// local storage
+const dataBase =  {
+    get: function(){
+        momentumApp = JSON.parse(localStorage.getItem('MomentumApp')) ||{}
+        if (Object.keys(momentumApp).length !=0) {
+            user = momentumApp.currentUser
+            todoArr = momentumApp[user].todoArr
+            city = momentumApp[user].city
+        }
+    },
+    addNewUser: function () {
+        user = newUser.value
+        momentumApp[user] = {
+            'user' : user,
+            'isHours24': hours24,
+            'city': city,
+            'todoArr': []
+                }
+        momentumApp.currentUser = user
+        window.localStorage.setItem('MomentumApp', JSON.stringify(momentumApp))
+    },
+    set:function() {
+        momentumApp.currentUser = user
+        window.localStorage.setItem('MomentumApp', JSON.stringify(momentumApp))
+    },
+    changeUser : function(user){
+        momentumApp.currentUser = user
+        dataBase.set()
+        dataBase.get()
+    }
+}
+// Greetings and Time
+let hours24 = false;
 function checkTimeGreeting(time){
     const hour = time.getHours()
     if(hour>=0 && hour<12){
@@ -16,34 +52,115 @@ function checkTimeGreeting(time){
         return 'Welcome'
     }
 }
+// User modal
+const userModal = document.querySelector('#user-modal')
+const modalClose = document.querySelector('#modal-close')
+const addUser = document.querySelector('#add-user')
+const newUser = document.querySelector('#new-user')
+const newUserButton = document.querySelector('#new-user-button')
+const newUserInput = document.querySelector('#new-user-wrapper')
+
+function setUser() {
+    const userName = document.querySelector('#user-name')
+    userName.textContent = user
+    userName.addEventListener('click',(e)=>{
+        modalUser.create()
+        toggleModal()
+    })
+}
+function toggleModal() {
+    userModal.classList.toggle('hidden')
+}
+function toggleNewUserInputButton(){
+    newUserInput.classList.toggle('hidden')
+    newUserButton.classList.toggle('hidden')
+}
+// Display User in Modal
+const userProfileList = document.querySelector('#user-profile-list')
+let modalUser = {
+    create : function(){
+        for(profile in momentumApp){
+            if(profile == 'currentUser'){
+                continue
+            }
+            const userWrapper = document.createElement('li')
+            const userText = document.createElement('p')
+            userText.textContent = profile
+            userWrapper.setAttribute('id', profile)
+            userText.addEventListener('click',(e)=>{
+                user = e.target.parentElement.id
+                dataBase.changeUser(user)
+                toggleModal()
+    
+            })
+            // delete Icon
+            const deleteUser = document.createElement('span')
+            deleteUser.setAttribute('class', "material-symbols-outlined delete-icon")
+            deleteUser.innerHTML = 'delete'
+            deleteUser.addEventListener('click',(e)=>{
+                console.log(e.target.parentElement.id)
+            })
+            userWrapper.append(userText)
+            userWrapper.append(deleteUser)
+            userProfileList.append(userWrapper)
+        };
+    },
+    refresh: function(){
+            userProfileList.innerHTML =''
+            modalUser.create()
+    }
+}
+newUserButton.addEventListener('click',()=>{
+    console.log('button');
+    toggleNewUserInputButton()
+})
+modalClose.addEventListener('click',()=>{
+    console.log('close Icon')
+    toggleModal()
+})
+addUser.addEventListener('click',()=>{
+    toggleNewUserInputButton()
+    AddUserStorage()
+})
+// Time
 function toogleGreeting(time) {
-    greetingContainer.textContent = `${checkTimeGreeting(time)}, ${user}`
+    const greetingContainer = document.querySelector('#greetings')
+    greetingContainer.textContent = `${checkTimeGreeting(time)}`
 }
 function checkTime(time){
     const timeContainer = document.querySelector('#time')
-    timeContainer.textContent = ('0'+time.getHours()).slice(-2)+":"+('0'+ time.getMinutes()).slice(-2)
+    let hrs = time.getHours()
+    const minute = time.getMinutes()
+    if(hours24 == false){
+        if (hrs > 13 && hrs < 23) {
+            hrs = hrs -12
+        }
+    }
+    timeContainer.textContent = ('0'+hrs).slice(-2)+":"+('0'+ minute).slice(-2)
 }
 // Qoutes
 var category = 'success'
-function fetchQuotes(){
-    $.ajax({
-        method: 'GET',
-        url: 'https://api.api-ninjas.com/v1/quotes?category=' + category,
-        headers: { 'X-Api-Key': 'DSd6FPovthYiP8npib9Afg==qO4KqQ9W6uxnpcu9'},
-        contentType: 'application/json',
-        success: function(result) {
-            displayQuotes(result)
-        },
-        error: function ajaxError(jqXHR) {
-            console.error('Error: ', jqXHR.responseText);
-        }
-    });
-}
-function displayQuotes(quotesArr) {
-    const quotes = document.querySelector('#quoteS')
-    quotes.textContent = '"'+quotesArr[0].quote +'"'
-    const author = document.querySelector('#author')
-    author.textContent = `-${quotesArr[0].author}`
+let quotes = {
+    fetch : function(){
+        $.ajax({
+            method: 'GET',
+            url: 'https://api.api-ninjas.com/v1/quotes?category=' + category,
+            headers: { 'X-Api-Key': 'DSd6FPovthYiP8npib9Afg==qO4KqQ9W6uxnpcu9'},
+            contentType: 'application/json',
+            success: function(result) {
+                quotes.display(result)
+            },
+            error: function ajaxError(jqXHR) {
+                console.error('Error: ', jqXHR.responseText);
+            }
+        });
+    }, 
+    display : function(quotesArr){
+        const quotes = document.querySelector('#quoteS')
+        quotes.textContent = '"'+quotesArr[0].quote +'"'
+        const author = document.querySelector('#author')
+        author.textContent = `-${quotesArr[0].author}`
+    }
 }
 // Weather
 let weather = {
@@ -52,34 +169,40 @@ let weather = {
     cityname: 'manila',
     unit: '&units=metric',
     fetchWeather : function (lat, lon, name) {
+        console.log(lat, lon, name)
         fetch(
             `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${this.apiKey}${this.unit}`
         )
         .then( res => res.json())
         .then(data =>{
+            console.log(data)
             const {temp} = data.main;
             const cityName = name;
             const {icon} = data.weather[0]
+            console.log(temp, cityName, icon)
             updateWeather(temp, icon, cityName)
-        })
+            })
         }
     },
     geoCoder : {
-            url :'http://api.openweathermap.org/geo/1.0/direct?q=',
-            apiKey: '6bcb2167c56a56aa6921e65c22e62134',
-            fetchCoordinate : function (city) {
-                fetch(
-                    this.url +
-                    city +
-                    '&limit=5&appid=' +
-                    this.apiKey
-                )
-                .then(res => res.json())
-                .then( data => {
-                    this.parseData(data)
-                });
+        url :'http://api.openweathermap.org/geo/1.0/direct?q=',
+        apiKey: '6bcb2167c56a56aa6921e65c22e62134',
+        fetchCoordinate : function (city) {
+            console.log('fetchCoordinate')
+            fetch(
+                this.url +
+                city +
+                '&limit=5&appid=' +
+                this.apiKey
+            )
+            .then(res => res.json())
+            .then( data => {
+                console.log(data)
+                this.parseData(data)
+            });
         },
         parseData : function(data){
+            console.log('parsed')
             firstResult = data[0]
             const {name} = firstResult
             const {lon, lat} = firstResult
@@ -88,6 +211,7 @@ let weather = {
     }
 }
 function updateWeather(temp, icon,cityName) {
+    console.log('updateWeather')
     tempUnit = '°C'
     iconURL = 'https://openweathermap.org/img/wn/'+icon+'.png'
     const temperatureReading = document.querySelector('#temperature-reading')
@@ -108,53 +232,111 @@ const addTodoInput = document.querySelector('#add-todo-input');
 const submitTodo = document.querySelector('#submit-todo')
 const todoInput = document.querySelector('#todo-input')
 const todoHero = document.querySelector('#todo-hero');
-const todoItemsArr = document.querySelectorAll('.todo-item');
+const todoItemsArr = document.querySelectorAll('.todo-item')
 
-// local storage
-let todoArr = JSON.parse(window.localStorage.getItem('todoArr') || [])
-let uncheckedTodo;
-function fetchStoreTodo(){
-    window.localStorage.setItem('todoArr', JSON.stringify(todoArr))
-    todoArr = JSON.parse(window.localStorage.getItem('todoArr'))
-    refreshUncheckTodo()
-}
-fetchStoreTodo()
-
-function refreshUncheckTodo() {
-    uncheckedTodo = []
-    for (let i = 0; i < todoArr.length; i++) {
-        const todo= todoArr[i]
-        if (todo.isComplete === false) {
-            uncheckedTodo.push({'todo': todo.todo, 'isComplete': todo.isComplete, 'index': i})
+const todoWidget ={
+    // add todo to todo Array
+    addTodo: function() {
+        todoTextContent = todoInput.textContent
+        if(todoTextContent!=''){
+            todo = {'todo': todoTextContent}
+            todo.isComplete = false
+            todoArr.unshift(todo)
         }
+    },
+    // create elements for Todo
+    create : function(toDo, index, container){
+        const todoItem = document.createElement('li')
+        const checkbox = document.createElement('input')
+        // create delete icon
+        const deleteIcon = document.createElement('span')
+        deleteIcon.setAttribute('class', "material-symbols-outlined delete-icon")
+        deleteIcon.innerHTML = 'delete'
+        // create checkbox
+        checkbox.setAttribute('type','checkbox')
+        todoItem.setAttribute('class', 'todo todo-item')
+        const todoText = document.createElement('p')
+        todoText.setAttribute('contenteditable', 'true')
+        todoText.textContent = toDo.todo;
+        // retreive checkbox from previous display
+        if(toDo.isComplete == true){
+            checkbox.setAttribute('checked', null)
+            todoText.classList.add('checked')
+        }
+        // checkbox eventhandler
+        checkbox.addEventListener('click',()=>{
+            toggleIsComplete(index)
+            refreshTodo()
+
+        })
+        deleteIcon.addEventListener('click',()=>{
+            todoArr.splice(index,1)
+            todoHeroSection.display()
+            refreshTodo()
+        })
+        // todolist edit event handler
+        todoText.addEventListener('input',(e)=>{
+            todoArr[index].todo = e.target.textContent
+            window.localStorage.setItem('todoArr', JSON.stringify(todoArr))
+            if (container.classList.contains('todo-list')) {
+                todoHeroSection.clear()
+                dataBase.set()
+                dataBase.get()
+                todoHeroSection.display()
+            }
+            else{
+                todoWidget.clear()
+                todoWidget.display()
+            }
+    
+        })
+        todoItem.append(checkbox)
+        todoItem.append(todoText)
+        todoItem.append(deleteIcon)
+        container.append(todoItem)
+        },
+        // display todo to todo Widget
+    display : function(){
+        if(todoArr.length == 0){
+            const noTodo = document.createElement('p')
+            noTodo.textContent = "No todo available"
+            todoList.append(noTodo)
+        }
+        for (let i = 0; i < todoArr.length; i++) {
+            const toDo = todoArr[i]
+            todoWidget.create(toDo, i, todoList)
+        }
+    },
+
+    clear: function(){
+        todoList.innerHTML =''
     }
 }
-
-window.localStorage.setItem('todoArr', JSON.stringify(todoArr))
-
-todoSidebar.addEventListener('click', ()=>{
-    todoContainerToggle()
-    toggleTodoArrow()
-})
-// SUBMIT Button
-submitTodo.addEventListener('click',()=>{
-    toggleTodoInput()
-    addTodoArr()
-    clearTodoInput()
-    refreshTodo()
-})
-addTodoButton.addEventListener('click',()=>{
-    toggleTodoInput()
-})
-// TOGGLE CONTAINER WHEN CLICKED OUTSIDE
-window.onclick= (e)=>{
-    if(
-    !e.target.parentElement.classList.contains('todo') 
-    && 
-    todoContainer.classList.contains('active'))
-        {
-        toggleTodoArrow()
-        todoContainer.classList.remove('active')
+const todoHeroSection = {
+    clear: function(){
+        todoHero.innerHTML =''
+    },
+    fetchUnchecked : function(){
+        uncheckedTodo = []
+        for (let i = 0; i < todoArr.length; i++) {
+            const todo= todoArr[i]
+            if (todo.isComplete === false) {
+                uncheckedTodo.push({'todo': todo.todo, 'isComplete': todo.isComplete, 'index': i})
+            }
+        }
+    },
+    // display Todo to hero section
+    display: function(){
+        console.log('hero')
+        if(uncheckedTodo.length == 0){
+            const heroTodo = document.createElement('p');
+            heroTodo.textContent = 'Nothing to do today'
+            todoHero.append(heroTodo)
+        }
+        else{
+            index = uncheckedTodo[0].index
+            todoWidget.create(uncheckedTodo[0], index, todoHero)
+        }
     }
 }
 function todoContainerToggle(){
@@ -173,21 +355,14 @@ function toggleTodoInput(){
     addTodoInput.classList.toggle('hidden')
 }
 function refreshTodo() {
-    fetchStoreTodo()
-    clearTodoList()
-    renderTodos()
-    displayToHero()
-}
-function renderTodos() {
-    if(todoArr.length == 0){
-        const noTodo = document.createElement('p')
-        noTodo.textContent = "No todo available"
-        todoList.append(noTodo)
-    }
-    for (let i = 0; i < todoArr.length; i++) {
-        const toDo = todoArr[i]
-        createTodo(toDo, i, todoList)
-    }
+    dataBase.set()
+    dataBase.get()
+    todoHeroSection.fetchUnchecked()
+    todoWidget.clear()
+    todoHeroSection.clear()
+    todoWidget.display()
+    todoHeroSection.display()
+    setUser()
 }
 function toggleIsComplete(index){
     if(todoArr[index].isComplete == true){
@@ -197,79 +372,50 @@ function toggleIsComplete(index){
         todoArr[index].isComplete = true
     }
 }
-function addTodoArr(){
-    todoTextContent = todoInput.textContent
-    if(todoTextContent!=''){
-        todo = {'todo': todoTextContent}
-        todo.isComplete = false
-        todoArr.unshift(todo)
-    }
-}
 function clearTodoInput() {
     todoInput.textContent =''
 }
-function createTodo(toDo, index, container){
-    const todoItem = document.createElement('li')
-    const checkbox = document.createElement('input')
-    // create delete icon
-    const deleteIcon = document.createElement('span')
-    deleteIcon.setAttribute('class', "material-symbols-outlined delete-icon")
-    deleteIcon.innerHTML = 'delete'
-    // create checkbox
-    checkbox.setAttribute('type','checkbox')
-    todoItem.setAttribute('class', 'todo todo-item')
-    const todoText = document.createElement('p')
-    todoText.setAttribute('contenteditable', 'true')
-    todoText.textContent = toDo.todo;
-    // retreive checkbox from previous display
-    if(toDo.isComplete == true){
-        checkbox.setAttribute('checked', null)
-        todoText.classList.add('checked')
-    }
-    // checkbox eventhandler
-    checkbox.addEventListener('click',()=>{
-        toggleIsComplete(index)
-        displayToHero()
-        refreshTodo()
-    })
-    deleteIcon.addEventListener('click',()=>{
-        todoArr.splice(index,1)
-        displayToHero()
-        refreshTodo()
-    })
-    // todolist edit event handler
-    todoText.addEventListener('input',(e)=>{
-        todoArr[index].todo = e.target.textContent
-        window.localStorage.setItem('todoArr', JSON.stringify(todoArr))
-        if (container.classList.contains('todo-list')) {
-            todoHero.innerHTML =''
-            refreshUncheckTodo()
-            displayToHero()
-        }
-        else{
-            todoList.innerHTML = ''
-            renderTodos()
-        }
-  
-    })
-    todoItem.append(checkbox)
-    todoItem.append(todoText)
-    todoItem.append(deleteIcon)
-    container.append(todoItem)
+function refreshUncheckTodo() {
+
 }
-function clearTodoList(){
-    todoList.innerHTML =''
-    todoHero.innerHTML =''
-}
-function displayToHero(){
-    if(uncheckedTodo.length == 0){
-        const heroTodo = document.createElement('p');
-        heroTodo.textContent = 'Nothing to do today'
-        todoHero.append(heroTodo)
+
+window.localStorage.setItem('todoArr', JSON.stringify(todoArr))
+
+todoSidebar.addEventListener('click', ()=>{
+    todoContainerToggle()
+    toggleTodoArrow()
+})
+// SUBMIT Button
+submitTodo.addEventListener('click',()=>{
+    toggleTodoInput()
+    todoWidget.addTodo()
+    clearTodoInput()
+    refreshTodo()
+})
+addTodoButton.addEventListener('click',()=>{
+    toggleTodoInput()
+})
+// TOGGLE CONTAINER WHEN CLICKED OUTSIDE
+window.onclick= (e)=>{
+    // if clicked outside Todo widget, widget closes
+    if(
+    !e.target.parentElement.classList.contains('todo') 
+    && 
+    todoContainer.classList.contains('active'))
+        {
+        toggleTodoArrow()
+        todoContainer.classList.remove('active')
     }
-    else{
-        index = uncheckedTodo[0].index
-        createTodo(uncheckedTodo[0], index, todoHero)
+    if(e.target.id == 'user-modal'){
+        console.log('window')
+        toggleModal()
+    }
+    if(!e.target.classList.contains('new-user') 
+    &&
+    e.target.id != 'new-user-button'
+    &&
+    newUserButton.classList.contains('hidden')){
+        toggleNewUserInputButton()
     }
 }
 // background
@@ -298,19 +444,25 @@ function displayBackground(backgrounds){
         backgroundHero.style.backgroundImage = `url(${backgroundScene[i].url})`
     }, 60000);
 }
+// initialize
+function startUp() {
+    dataBase.get()
+    quotes.fetch()
+    todoWidget.display()
+    todoHeroSection.fetchUnchecked()
+    todoHeroSection.display()
+    setUser()
+    weather.geoCoder.fetchCoordinate(city)
+}
 
-fetchQuotes()
-displayToHero()
-renderTodos(todoArr)
 
-const city = 'Cebu'
-weather.geoCoder.fetchCoordinate(city)
 setInterval(()=>{
+    console.log('geocoder')
     weather.geoCoder.fetchCoordinate(city)
 },30000)
 // quotes interval
 setInterval(() => {
-    fetchQuotes()
+    quotes.fetch()
 }, 60000);
 // time interval
 setInterval(()=>{
@@ -318,3 +470,4 @@ setInterval(()=>{
     toogleGreeting(time);
     checkTime(time)
 },1000)
+startUp()
