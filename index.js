@@ -2,17 +2,19 @@
 let user = 'Guest'
 let todoArr = []
 let uncheckedTodo = [];
-let city = 'cebu';
+let city = 'London';
 let momentumApp = {}
 // local storage
 const dataBase =  {
     get: function(){
         momentumApp = JSON.parse(localStorage.getItem('MomentumApp')) ||{}
-        if (Object.keys(momentumApp).length !=0) {
+        console.log('get')
+        if (Object.keys(momentumApp).length != 0) {
+            console.log(Object.keys(momentumApp))
             user = momentumApp.currentUser
             todoArr = momentumApp[user].todoArr
-            city = momentumApp[user].city
         }
+        todoHeroSection.fetchUnchecked()
     },
     addNewUser: function () {
         user = newUser.value
@@ -104,6 +106,9 @@ let modalUser = {
                 console.log(userDelete)
                 if(userDelete == user){
                     alert('Currently in user')
+                }
+                if(userDelete == 'Guest'){
+                    alert('Can\'t delete default user')
                 }
                 else{
                     delete momentumApp[e.target.parentElement.id]
@@ -296,9 +301,9 @@ const todoWidget ={
                 todoHeroSection.display()
             }
             else{
+                todoWidget.clear()
                 dataBase.set()
                 dataBase.get()
-                todoWidget.clear()
                 todoWidget.display()
             }
     
@@ -322,13 +327,15 @@ const todoWidget ={
     },
 
     clear: function(){
+        console.log('widget cleared')
         todoList.innerHTML =''
     }
 }
 
 const todoHeroSection = {
     clear: function(){
-        todoHero.innerHTML =''
+        console.log('Hero cleared')
+        todoHero.textContent =''
     },
     fetchUnchecked : function(){
         uncheckedTodo = []
@@ -342,11 +349,13 @@ const todoHeroSection = {
     // display Todo to hero section
     display: function(){
         if(uncheckedTodo.length == 0){
+            console.log(uncheckedTodo);
             const heroTodo = document.createElement('p');
             heroTodo.textContent = 'Nothing to do today'
             todoHero.append(heroTodo)
         }
         else{
+            console.log(uncheckedTodo);
             index = uncheckedTodo[0].index
             todoWidget.create(uncheckedTodo[0], index, todoHero)
         }
@@ -471,7 +480,6 @@ function startUp() {
 
 
 setInterval(()=>{
-    console.log('geocoder')
     weather.geoCoder.fetchCoordinate(city)
 },30000)
 // quotes interval
