@@ -31,8 +31,6 @@ const dataBase =  {
     },
     changeUser : function(user){
         momentumApp.currentUser = user
-        dataBase.set()
-        dataBase.get()
     }
 }
 // Greetings and Time
@@ -60,13 +58,16 @@ const newUser = document.querySelector('#new-user')
 const newUserButton = document.querySelector('#new-user-button')
 const newUserInput = document.querySelector('#new-user-wrapper')
 
+const userName = document.querySelector('#user-name')
+userName.addEventListener('click',()=>{
+    modalUser.create()
+    toggleModal()
+})
 function setUser() {
-    const userName = document.querySelector('#user-name')
+    if(user==''){
+        user = '  '
+    }
     userName.textContent = user
-    userName.addEventListener('click',(e)=>{
-        modalUser.create()
-        toggleModal()
-    })
 }
 function toggleModal() {
     userModal.classList.toggle('hidden')
@@ -79,6 +80,7 @@ function toggleNewUserInputButton(){
 const userProfileList = document.querySelector('#user-profile-list')
 let modalUser = {
     create : function(){
+        userProfileList.textContent = ''
         for(profile in momentumApp){
             if(profile == 'currentUser'){
                 continue
@@ -87,23 +89,36 @@ let modalUser = {
             const userText = document.createElement('p')
             userText.textContent = profile
             userWrapper.setAttribute('id', profile)
+            // changeing User
             userText.addEventListener('click',(e)=>{
                 user = e.target.parentElement.id
-                dataBase.changeUser(user)
+                refreshTodo()
                 toggleModal()
-    
             })
             // delete Icon
             const deleteUser = document.createElement('span')
             deleteUser.setAttribute('class', "material-symbols-outlined delete-icon")
             deleteUser.innerHTML = 'delete'
             deleteUser.addEventListener('click',(e)=>{
-                console.log(e.target.parentElement.id)
+                const userDelete = e.target.parentElement.id
+                console.log(userDelete)
+                if(userDelete == user){
+                    alert('Currently in user')
+                }
+                else{
+                    delete momentumApp[e.target.parentElement.id]
+                    dataBase.set()
+                    dataBase.get()
+                    modalUser.refresh()
+                }
             })
             userWrapper.append(userText)
             userWrapper.append(deleteUser)
             userProfileList.append(userWrapper)
         };
+    },
+    newUser: function(){
+
     },
     refresh: function(){
             userProfileList.innerHTML =''
@@ -120,7 +135,10 @@ modalClose.addEventListener('click',()=>{
 })
 addUser.addEventListener('click',()=>{
     toggleNewUserInputButton()
-    AddUserStorage()
+    dataBase.addNewUser()
+    dataBase.get()
+    toggleModal()
+    setUser()
 })
 // Time
 function toogleGreeting(time) {
@@ -169,17 +187,14 @@ let weather = {
     cityname: 'manila',
     unit: '&units=metric',
     fetchWeather : function (lat, lon, name) {
-        console.log(lat, lon, name)
         fetch(
             `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${this.apiKey}${this.unit}`
         )
         .then( res => res.json())
         .then(data =>{
-            console.log(data)
             const {temp} = data.main;
             const cityName = name;
             const {icon} = data.weather[0]
-            console.log(temp, cityName, icon)
             updateWeather(temp, icon, cityName)
             })
         }
@@ -188,7 +203,6 @@ let weather = {
         url :'http://api.openweathermap.org/geo/1.0/direct?q=',
         apiKey: '6bcb2167c56a56aa6921e65c22e62134',
         fetchCoordinate : function (city) {
-            console.log('fetchCoordinate')
             fetch(
                 this.url +
                 city +
@@ -197,12 +211,10 @@ let weather = {
             )
             .then(res => res.json())
             .then( data => {
-                console.log(data)
                 this.parseData(data)
             });
         },
         parseData : function(data){
-            console.log('parsed')
             firstResult = data[0]
             const {name} = firstResult
             const {lon, lat} = firstResult
@@ -211,7 +223,6 @@ let weather = {
     }
 }
 function updateWeather(temp, icon,cityName) {
-    console.log('updateWeather')
     tempUnit = '°C'
     iconURL = 'https://openweathermap.org/img/wn/'+icon+'.png'
     const temperatureReading = document.querySelector('#temperature-reading')
@@ -285,6 +296,8 @@ const todoWidget ={
                 todoHeroSection.display()
             }
             else{
+                dataBase.set()
+                dataBase.get()
                 todoWidget.clear()
                 todoWidget.display()
             }
@@ -312,6 +325,7 @@ const todoWidget ={
         todoList.innerHTML =''
     }
 }
+
 const todoHeroSection = {
     clear: function(){
         todoHero.innerHTML =''
@@ -327,7 +341,6 @@ const todoHeroSection = {
     },
     // display Todo to hero section
     display: function(){
-        console.log('hero')
         if(uncheckedTodo.length == 0){
             const heroTodo = document.createElement('p');
             heroTodo.textContent = 'Nothing to do today'
@@ -339,6 +352,7 @@ const todoHeroSection = {
         }
     }
 }
+
 function todoContainerToggle(){
     todoContainer.classList.toggle('active')
 }
