@@ -111,7 +111,7 @@ const todoHero = document.querySelector('#todo-hero');
 const todoItemsArr = document.querySelectorAll('.todo-item');
 
 // local storage
-let todoArr = JSON.parse(window.localStorage.getItem('todoArr') || [])
+let todoArr = JSON.parse(window.localStorage.getItem('todoArr') || '[]')
 let uncheckedTodo;
 function fetchStoreTodo(){
     window.localStorage.setItem('todoArr', JSON.stringify(todoArr))
